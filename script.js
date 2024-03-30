@@ -123,3 +123,52 @@ function removeItemCart(name){
         updateCartModal();
     }
 }
+//monitorar nosso inpute
+addressInput.addEventListener("input", (event)=>{
+    let inputValue = event.target.value;
+
+    if(inputValue !== ""){
+        addressInput.classList.remove("border-red-500")
+        addressWarn.classList.add("hidden")
+    }
+})
+
+
+checkoutBtn.addEventListener("click", ()=>{
+    
+    const isOpen = checkRestaurantOpen();
+    if(!isOpen){
+        alert("RESTAURANTE FECHADO NO MOMENTO!")
+        return;
+    }
+    
+    if(cart.length === 0) return;
+    if(addressInput.value ===""){
+        addressWarn.classList.remove("hidden")
+        addressInput.classList.add("border-red-500")
+        return;
+    }
+
+    //Enviar o pedido api Whats
+
+    console.log(cart);
+})
+
+//verifcar horario
+function checkRestaurantOpen(){
+    const data = new Date();
+    const hour = data.getHours();
+    return hour >= 18 && hour < 23;
+}
+
+const spanItem = document.getElementById("date-span")
+const isOpen = checkRestaurantOpen();
+
+if(isOpen){
+    spanItem.classList.remove("bg-red-500");
+    spanItem.classList.add("bg-green-600");
+    
+}else{
+    spanItem.classList.remove("bg-green-600");
+    spanItem.classList.add("bg-red-500");
+}
