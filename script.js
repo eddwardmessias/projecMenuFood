@@ -135,12 +135,25 @@ addressInput.addEventListener("input", (event)=>{
 
 
 checkoutBtn.addEventListener("click", ()=>{
-    
+  
     const isOpen = checkRestaurantOpen();
     if(!isOpen){
-        alert("RESTAURANTE FECHADO NO MOMENTO!")
+
+        Toastify({
+            text: "Ops o estabelecimento está fechado!",
+            duration: 3000,
+            close: true,
+            gravity: "top", // `top` or `bottom`
+            position: "left", // `left`, `center` or `right`
+            stopOnFocus: true, // Prevents dismissing of toast on hover
+            style: {
+                background: "#ef4444",
+            },
+            }).showToast();
         return;
+
     }
+
     
     if(cart.length === 0) return;
     if(addressInput.value ===""){
@@ -149,16 +162,35 @@ checkoutBtn.addEventListener("click", ()=>{
         return;
     }
 
-    //Enviar o pedido api Whats
 
-    console.log(cart);
+    let totalPedido = 0;
+    cart.forEach(item => {
+        totalPedido += item.price * item.quantity;
+    });
+
+    //Enviar o pedido api Whats
+    const cartItems = cart.map((item)=>{
+        return(
+            `Pedidos: ${item.name}\nQuantidade: (${item.quantity})\nPreço: R$ ${item.price}\n`
+        )
+    }).join("") + `Total: R$ ${totalPedido.toFixed(2)} reais\n`;
+
+    const message = encodeURI(cartItems)
+    const phone = "83988639024"
+
+    window.open(`https://wa.me/${phone}?text=${message} Endereço: ${addressInput.value}`, "_blank")
+
+
+    cart = [];
+    updateCartModal();
+
 })
 
 //verifcar horario
 function checkRestaurantOpen(){
     const data = new Date();
     const hour = data.getHours();
-    return hour >= 18 && hour < 23;
+    return hour >= 13 && hour < 23;
 }
 
 const spanItem = document.getElementById("date-span")
